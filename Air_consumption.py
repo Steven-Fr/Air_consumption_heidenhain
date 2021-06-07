@@ -3,26 +3,6 @@
 """
 This module imports and starts all python masks.
 The masks runs in the background.
-
-The visibility of each mask is controlled in the mask file.
-Example:
-  Open the sub folder "masks" and the file "Mask_Example".
-  Look at: embeddedWindow(plcSymbol = 'MG_PYM_Mask_Example')
-
-Some masks can be imported in accordance with a PLC symbol.
-Example:
-  if jh.Get(GLOBAL_SYMBOL + PLC_OEMMACHINE_WINDOW_ACTIVE) is not None:
-      import masks.oemMachine
-The token "GLOBAL_SYMBOL" and "PLC_OEMMACHINE_WINDOW_ACTIVE" are defined in the file "common/plcSymbolDefinitions"
-
-HOW TO CREATE A NEW MASK FILE?
- - Create a new file with the extension .py in the sub folder masks.
- - Import the new file name like:  import masks.example (without extension ).
- - Define all pygtk or plcgtk widgets in the new file.
- - For more details look into masks/example.py.
-
-Author: JH PLC-Service / MCE / +49 (8669) 31-3102 / service.plc@heidenhain.de
-Version: 2.3
 """
 
 # IMPORT MODULS
@@ -31,24 +11,7 @@ import os, sys
 
 sys.path.append('../../')
 from masks import * #import all standard libraries
-
-import os.path
-import pickle        # function to store and restore setups
-import gobject       # gobject for global events
-import os            # operating system functions
 import pygtk
-pygtk.require('2.0')
-import gtk           # pygtk functions
-import gtk.glade     # Glade XML description file functions
-import pyjh          # JH interface, version
-pyjh.require('3.4')
-import jh            # Data-Access interface and Main-function
-import jh.gtk        # jh.gtk class incl. window-registration
-import jh.softkey    # jh softkey functions
-import jh.gtk.glade  # jh.gtk Glade XML description file functions
-import jh.note       # to show a note in the headline
-import jh.event
-
 
 import time
 import datetime
@@ -154,14 +117,14 @@ while wline01 < 24:      #finche non ho scritto 24 colonne cicla
             myTableDiag01.attachToCell(gtk.Label((txt(now))),col=(bar01+1),row=3, xpadding=5)
             now = now - 1                                                                                         #decremento l'ora da controllare
 
-        elif datatabella01 < now:                                                                 #se l'ora della riga è minore di quella aspettata la macchina è stata spenta per piu di un ora e
+        elif datatabella01 < now:                                                                 #se l'ora della riga ï¿½ minore di quella aspettata la macchina ï¿½ stata spenta per piu di un ora e
             jh.Put({'\\PLC\\program\\symbol\\global\\DG_levelbar_count01[%s]' %bar01: Zero01})    #non ha scritto in tabella quel'ora quindi creo una barra con valore 0 e passo alla barra sucessiva
             bar01 = bar01 -1                                                                      #ricontrollando la stessa riga della tabella (non decremento start01)
             wline01 = wline01 +1
             myTableDiag01.attachToCell(plcLevelBar(plcSymbol = "DG_levelbar_count01[%s]" %(bar01+1), maxValue= 1600,   plcFactor=1,    orientation=gtk.PROGRESS_BOTTOM_TO_TOP, width=45, height=180, barColors={400:'red',500:'yellow',700:'green'},showText = True, preText='',postText=''), col=(bar01+1), row=2)
             myTableDiag01.attachToCell(gtk.Label(txt((now))),       col=(bar01+1),row=3, xpadding=5)
             now = now - 1
-        elif datatabella01 > now:            #se maggiore c'è un anomalia nella tabella ignora il valore perchè è stata manomessa manualmente e passo alla riga sucessiva
+        elif datatabella01 > now:            #se maggiore c'ï¿½ un anomalia nella tabella ignora il valore perchï¿½ ï¿½ stata manomessa manualmente e passo alla riga sucessiva
             Start01 = Start01 -1
     else:
         jh.Put({'\\PLC\\program\\symbol\\global\\DG_levelbar_count01[%s]' %bar01: Zero01})
@@ -204,7 +167,7 @@ while wline1 < 31:      #finche non ho scritto 31 colonne cicla
         Datatimes = Datatimes/86400                                                                     #sec* min * hour = calcolo giorni
         giornitab = int(Datatimes)                                                                      #trasformo in dato intero per leggerlo
         datapartenza = datetime.date(1970, 1, 1)                                                        #data di partenza del timer usato dal plc
-        datatabella = datapartenza + datetime.timedelta(days=giornitab)                                 #calcolo il giorno in cui è stato scritto il valore in tabella
+        datatabella = datapartenza + datetime.timedelta(days=giornitab)                                 #calcolo il giorno in cui ï¿½ stato scritto il valore in tabella
 
 
 #----------------------------------
@@ -235,7 +198,7 @@ while wline1 < 31:      #finche non ho scritto 31 colonne cicla
             myTableDiag1.attachToCell(gtk.Label(txt((testo1))),       col=(bar1+1),row=5, xpadding=5)
 
 
-        elif datatabella < yesterday:     #se la data della riga è minore di quella aspettata la macchina è stata spenta per piu di un giorno e
+        elif datatabella < yesterday:     #se la data della riga ï¿½ minore di quella aspettata la macchina ï¿½ stata spenta per piu di un giorno e
             print "minore tab salta"              #non ha scritto in tabella quel giorno quindi credo una barra con valore 0 e passo alla barra sucessiva
                                           #ricontrollando la stessa riga della tabella
             jh.Put({'\\PLC\\program\\symbol\\global\\DG_levelbar_count1[%s]' %bar1: Zero1})
